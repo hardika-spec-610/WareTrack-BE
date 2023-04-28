@@ -11,18 +11,19 @@ import {
 } from "./errorsHandlers.js";
 import mongoose from "mongoose";
 import passport from "passport";
-// import googleStrategy from "./lib/auth/googleOauth.js";
+import usersRouter from "./api/users/index.js";
+import googleStrategy from "./lib/auth/googleOauth.js";
 
 const server = Express();
 const port = process.env.PORT || 3001;
-// passport.use("google", googleStrategy); // Do not forget to inform Passport that we want to use Google Strategy!
+passport.use("google", googleStrategy); // Do not forget to inform Passport that we want to use Google Strategy!
 // ************************** MIDDLEWARES *********************
 server.use(cors());
 server.use(Express.json()); // If you don't add this line BEFORE the endpoints all request bodies will be UNDEFINED!!!!!!!!!!!!!!!
-// server.use(passport.initialize()); // Do not forget to inform Express that we are using Passport!
+server.use(passport.initialize()); // Do not forget to inform Express that we are using Passport!
 
 // ************************** ENDPOINTS ***********************
-
+server.use("/users", usersRouter);
 // ************************* ERROR HANDLERS *******************
 server.use(badRequestHandler); // 400
 server.use(unauthorizedHandler); // 401
