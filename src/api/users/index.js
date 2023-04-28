@@ -6,6 +6,9 @@ import { checkUsersSchema, triggerBadRequest } from "./validation.js";
 import { JWTAuthMiddleware } from "../../lib/auth/jwt.js";
 import q2m from "query-to-mongo";
 import { createAccessToken } from "../../lib/auth/tools.js";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multer from "multer";
 
 const usersRouter = Express.Router();
 
@@ -127,6 +130,56 @@ usersRouter.put("/:userId", JWTAuthMiddleware, async (req, res, next) => {
 
     if (updatedUser) {
       res.send(updatedUser);
+    } else {
+      next(
+        createHttpError(404, `User with id ${req.params.userId} is not found`)
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+const cloudinaryUploaderAvatar = multer({
+  storage: new CloudinaryStorage({
+    cloudinary, // cloudinary is going to search for smth in .env vars called process.env.CLOUDINARY_URL
+    params: {
+      folder: "wareTrack/user-avatar",
+    },
+  }),
+}).single("avatar");
+
+usersRouter.post(
+  "/:userId/uploadAvatar",
+  JWTAuthMiddleware,
+  cloudinaryUploaderAvatar,
+  async (req, res, next) => {
+    try {
+      console.log("FILE:", req.file);
+      const updatedUser = await UsersModel.findByIdAndUpdate(
+        req.params.userId,
+        { avatar: req.file.path },
+        { new: true, runValidators: true }
+      );
+      console.log("updatedUser", updatedUser);
+      if (updatedUser) {
+        res.send(updatedUser);
+      } else {
+        next(
+          createHttpError(404, `User with id ${req.params.userId} is not found`)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+usersRouter.delete("/:userId", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const deletedUser = await UsersModel.findByIdAndDelete(req.params.userId);
+    if (deletedUser) {
+      res.status(204).send();
     } else {
       next(
         createHttpError(404, `User with id ${req.params.userId} is not found`)
