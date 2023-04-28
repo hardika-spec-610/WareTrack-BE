@@ -102,6 +102,41 @@ usersRouter.delete("/me", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
+usersRouter.get("/:userId", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const foundUser = await UsersModel.findById(req.params.userId);
+    if (foundUser) {
+      res.send(foundUser);
+    } else {
+      next(
+        createHttpError(404, `User with id ${req.params.userId} is not found`)
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.put("/:userId", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const updatedUser = await UsersModel.findByIdAndUpdate(
+      req.params.userId,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (updatedUser) {
+      res.send(updatedUser);
+    } else {
+      next(
+        createHttpError(404, `User with id ${req.params.userId} is not found`)
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 usersRouter.post("/register", async (req, res, next) => {
   try {
     const { email } = req.body;
