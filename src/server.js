@@ -13,6 +13,7 @@ import mongoose from "mongoose";
 import passport from "passport";
 import usersRouter from "./api/users/index.js";
 import googleStrategy from "./lib/auth/googleOauth.js";
+import productRouter from "./api/products/index.js";
 
 const server = Express();
 const port = process.env.PORT || 3001;
@@ -24,6 +25,7 @@ server.use(passport.initialize()); // Do not forget to inform Express that we ar
 
 // ************************** ENDPOINTS ***********************
 server.use("/users", usersRouter);
+server.use("/products", productRouter);
 // ************************* ERROR HANDLERS *******************
 server.use(badRequestHandler); // 400
 server.use(unauthorizedHandler); // 401

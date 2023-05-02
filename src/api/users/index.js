@@ -14,7 +14,10 @@ const usersRouter = Express.Router();
 
 usersRouter.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "consent",
+  })
 );
 
 usersRouter.get(
@@ -26,7 +29,9 @@ usersRouter.get(
     //However, there may be cases where you want to disable sessions, such as when implementing stateless authentication using tokens.
     try {
       // console.log("accessToken", req.user.accessToken);
-      res.redirect(`${process.env.FE_URL}?accessToken=${req.user.accessToken}`);
+      res.redirect(
+        `${process.env.FE_URL}/dashboard?accessToken=${req.user.accessToken}`
+      );
     } catch (error) {
       next(error);
     }
@@ -48,7 +53,7 @@ usersRouter.post(
   }
 );
 
-usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/", async (req, res, next) => {
   try {
     console.log("req.query", req.query);
     console.log("q2m", q2m(req.query));
@@ -196,11 +201,11 @@ usersRouter.post("/register", async (req, res, next) => {
     // Check if user already exists
     const existingUser = await UsersModel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ error: "Email has already existed" });
     }
     const newUser = new UsersModel(req.body);
-    const { _id } = await newUser.save();
-    res.status(201).send({ _id });
+    const newUserData = await newUser.save();
+    res.status(201).send(newUserData);
   } catch (error) {
     next(error);
   }
