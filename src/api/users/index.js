@@ -53,7 +53,7 @@ usersRouter.post(
   }
 );
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   try {
     console.log("req.query", req.query);
     console.log("q2m", q2m(req.query));
@@ -156,7 +156,6 @@ const cloudinaryUploaderAvatar = multer({
 
 usersRouter.post(
   "/:userId/uploadAvatar",
-  JWTAuthMiddleware,
   cloudinaryUploaderAvatar,
   async (req, res, next) => {
     try {

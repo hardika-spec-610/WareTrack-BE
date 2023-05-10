@@ -20,7 +20,7 @@ const productSchema = new Schema(
     brand: { type: String, required: true },
     imageUrl: {
       type: String,
-      required: true,
+      // required: true,
     },
     price: { type: Number, required: true },
     category: {
@@ -37,6 +37,7 @@ const productSchema = new Schema(
     reviews: { type: [reviewSchema] },
     quantity: { type: Number, required: true },
     numReviews: { type: Number, default: 0 },
+    purchasePrice: { type: Number },
   },
   {
     timestamps: true,

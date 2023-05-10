@@ -37,13 +37,13 @@ const userSchema = new Schema(
     avatar: {
       type: String,
       // required: true,
-      validate: {
-        validator: function (v) {
-          const pattern = /\.(jpeg|jpg|gif|png|svg)$/;
-          return pattern.test(v);
-        },
-        message: "Image link must be a valid URL for an image",
-      },
+      // validate: {
+      //   validator: function (v) {
+      //     const pattern = /\.(jpeg|jpg|gif|png|svg)$/;
+      //     return pattern.test(v);
+      //   },
+      //   message: "Image link must be a valid URL for an image",
+      // },
     },
     role: {
       type: String,

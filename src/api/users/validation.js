@@ -71,8 +71,9 @@ const productSchema = {
     in: ["body"],
     notEmpty: true,
     trim: true,
-    isInt: {
-      errorMessage: "price is a mandatory field and needs to be a number!",
+    isFloat: {
+      errorMessage:
+        "price is a mandatory field and needs to be a number or any float!",
     },
   },
   category: {
@@ -83,14 +84,14 @@ const productSchema = {
       errorMessage: "category is a mandatory field and needs to be a string!",
     },
   },
-  imageUrl: {
-    in: ["body"],
-    notEmpty: true,
-    trim: true,
-    isURL: {
-      errorMessage: "imageUrl is a mandatory field",
-    },
-  },
+  // imageUrl: {
+  //   in: ["body"],
+  //   notEmpty: true,
+  //   trim: true,
+  //   isURL: {
+  //     errorMessage: "imageUrl is a mandatory field",
+  //   },
+  // },
   quantity: {
     in: ["body"],
     notEmpty: true,
@@ -135,8 +136,9 @@ const productUpdateSchema = {
     optional: true,
     trim: true,
     notEmpty: true,
-    isInt: {
-      errorMessage: "price is a mandatory field and needs to be a number!",
+    isFloat: {
+      errorMessage:
+        "price is a mandatory field and needs to be a number or any float!",
     },
   },
   category: {
@@ -148,14 +150,14 @@ const productUpdateSchema = {
       errorMessage: "category is a mandatory field and needs to be a string!",
     },
   },
-  imageUrl: {
-    in: ["body"],
-    optional: true,
-    notEmpty: true,
-    isURL: {
-      errorMessage: "imageUrl is a mandatory field",
-    },
-  },
+  // imageUrl: {
+  //   in: ["body"],
+  //   optional: true,
+  //   notEmpty: true,
+  //   isURL: {
+  //     errorMessage: "imageUrl is a mandatory field",
+  //   },
+  // },
   quantity: {
     in: ["body"],
     optional: true,
@@ -228,7 +230,7 @@ export const triggerBadRequest = (req, res, next) => {
   } else {
     // 2.2 If we have any error --> trigger 400
     next(
-      createHttpError(400, "Errors during blog validation", {
+      createHttpError(400, "Errors during product validation", {
         errorsList: errors.array(),
       })
     );
