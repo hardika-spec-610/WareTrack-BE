@@ -44,6 +44,9 @@ server.use(passport.initialize()); // Do not forget to inform Express that we ar
 server.use("/users", usersRouter);
 server.use("/products", productRouter);
 server.use("/orders", orderRouter);
+server.get("/config/paypal", (req, res) => {
+  res.send(process.env.PAYPAL_CLIENT_ID);
+});
 // ************************* ERROR HANDLERS *******************
 server.use(badRequestHandler); // 400
 server.use(unauthorizedHandler); // 401

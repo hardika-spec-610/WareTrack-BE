@@ -53,7 +53,7 @@ usersRouter.post(
   }
 );
 
-usersRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
+usersRouter.get("/", async (req, res, next) => {
   try {
     console.log("req.query", req.query);
     console.log("q2m", q2m(req.query));
@@ -223,7 +223,7 @@ usersRouter.post("/login", async (req, res, next) => {
       const payload = { _id: user._id, role: user.role };
       const accessToken = await createAccessToken(payload);
 
-      res.send({ accessToken });
+      res.send({ accessToken, user });
     } else {
       // 3.2 If they are not --> trigger a 401 error
       next(createHttpError(401, "Credentials are not ok!"));
