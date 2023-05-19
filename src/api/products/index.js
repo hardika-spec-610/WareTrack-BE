@@ -30,6 +30,25 @@ productRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
     console.log("req.query", req.query);
     console.log("q2m", q2m(req.query));
     const mongoQuery = q2m(req.query);
+    console.log("mongoQuery", mongoQuery);
+
+    const { name, category, price, search } = mongoQuery.criteria;
+
+    if (name) name.$regex = name.$regex ? new RegExp(name.$regex, "i") : "";
+    if (category) mongoQuery.criteria.category = category;
+    if (price) {
+      mongoQuery.criteria.price = {
+        ...mongoQuery.criteria.price,
+        $lte: price.$lte ? parseFloat(price.$lte) : "",
+      };
+    }
+
+    if (search) {
+      mongoQuery.criteria.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
 
     const products = await ProductsModel.find(
       mongoQuery.criteria,
@@ -56,11 +75,18 @@ productRouter.get("/sort", async (req, res, next) => {
   try {
     console.log("req.query", req.query);
 
-    const { name, category, price, page = 1, limit = 10 } = req.query;
+    const { name, category, price, search, page = 1, limit = 10 } = req.query;
     const criteria = {};
+    console.log("criteria", criteria);
     if (name) criteria.name = { $regex: name, $options: "i" };
     if (category) criteria.category = category;
     if (price) criteria.price = { $lte: price };
+    if (search) {
+      criteria.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
 
     const sort = {};
     if (req.query.sort) {
